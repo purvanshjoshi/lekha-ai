@@ -1,0 +1,15 @@
+# Root gitignore
+lekha-backend/__pycache__/
+lekha-backend/*.pyc
+lekha-backend/venv/
+lekha-backend/.env
+
+lekha-frontend/node_modules/
+lekha-frontend/.next/
+lekha-frontend/out/
+lekha-frontend/.env*
+
+.DS_Store
+.vscode/
+.idea/
+*.log

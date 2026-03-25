@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+pydantic[email]
+pydantic-ai
+langgraph
+pdfplumber
+pandas
+sqlalchemy
+rapidfuzz
+openai
+python-multipart
+python-dotenv
+alembic
