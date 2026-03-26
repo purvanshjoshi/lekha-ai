@@ -1,42 +1,59 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { CheckCircle, AlertTriangle, FileText, Send } from 'lucide-react';
+import { Target, FileText, Send, Zap, ShieldCheck } from 'lucide-react';
 
 export default function RecoveryDashboard({ amount }: { amount: string }) {
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      className="grid grid-cols-1 md:grid-cols-3 gap-6"
+      className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full max-w-7xl mx-auto"
     >
-      {/* Left Panel: Primary Metric */}
-      <div className="md:col-span-2 space-y-6">
-        <div className="bg-blue-600/10 border border-blue-500/20 p-8 rounded-[2rem] flex items-center justify-between">
-          <div>
-            <p className="text-blue-400 font-bold uppercase tracking-widest text-xs mb-2">Recoverable Capital Found</p>
-            <h3 className="text-6xl font-black tracking-tighter text-white">{amount}</h3>
-          </div>
-          <div className="bg-blue-500/20 p-4 rounded-full">
-            <CheckCircle className="text-blue-500 w-12 h-12" />
+      {/* Recovery Hub: 60% */}
+      <div className="lg:col-span-8 space-y-8">
+        {/* Main Metric Card */}
+        <div className="bg-slate-900/50 border border-slate-800 p-12 rounded-[2.5rem] relative overflow-hidden group">
+          <Target className="absolute -top-12 -right-12 w-64 h-64 text-emerald-500/5 rotate-12 group-hover:rotate-15 transition-transform" />
+          <div className="relative z-10">
+            <span className="text-emerald-500 uppercase font-black tracking-widest text-xs mb-8 block">Total Recoverable Capital</span>
+            <div className="flex items-baseline gap-4 mb-10">
+              <h3 className="text-8xl font-black text-white tracking-tighter">
+                {amount.replace('₹', '')}
+              </h3>
+              <span className="text-3xl font-bold text-slate-700 tracking-widest uppercase">INR</span>
+            </div>
+            
+            <div className="flex items-center gap-3 text-emerald-500/80">
+              <ShieldCheck className="w-5 h-5" />
+              <span className="text-xs font-bold uppercase tracking-widest px-4 py-1.5 bg-emerald-500/10 rounded-full border border-emerald-500/20">
+                Consensus Audited
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Action List */}
-        <div className="bg-gray-900/40 border border-white/5 p-8 rounded-[2rem]">
-          <h4 className="flex items-center gap-2 font-bold mb-6 text-gray-300">
-            <FileText className="w-4 h-4 text-blue-500" />
-            Priority Legal Drafts
+        {/* Priority Actions */}
+        <div className="space-y-6">
+          <h4 className="flex items-center gap-4 text-xl font-bold text-white uppercase tracking-tight px-4">
+            <FileText className="w-5 h-5 text-emerald-500" />
+            Execution Ledger
           </h4>
+          
           <div className="space-y-4">
-            {[1, 2].map((i) => (
-              <div key={i} className="flex items-center justify-between p-5 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors group">
-                <div>
-                  <p className="font-bold text-gray-200">Matrix Solutions Pct Ltd</p>
-                  <p className="text-xs text-gray-500">Invoice: INV-4239 | Delta: ₹5,340</p>
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center justify-between p-8 bg-slate-900/40 border border-slate-800 rounded-2xl hover:bg-slate-900 transition-colors group">
+                <div className="flex items-center gap-6">
+                  <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center border border-slate-700 text-slate-500 font-bold group-hover:text-emerald-500 transition-colors">
+                    0{i}
+                  </div>
+                  <div>
+                    <h5 className="text-xl font-bold text-white mb-1">Trade Matrix Global</h5>
+                    <p className="text-slate-500 text-[10px] font-bold tracking-widest uppercase">Recoverable: ₹5,420 • ID: LX-202{i}</p>
+                  </div>
                 </div>
-                <button className="bg-blue-600 text-white px-6 py-2 rounded-xl text-sm font-bold opacity-80 group-hover:opacity-100 flex items-center gap-2">
-                  <Send className="w-4 h-4" /> Send Notice
+                <button className="flex items-center gap-3 px-8 py-3.5 bg-emerald-500 text-emerald-950 rounded-full font-black text-xs uppercase tracking-widest hover:bg-emerald-400 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-emerald-500/10">
+                  <Send className="w-4 h-4" /> Execute
                 </button>
               </div>
             ))}
@@ -44,27 +61,38 @@ export default function RecoveryDashboard({ amount }: { amount: string }) {
         </div>
       </div>
 
-      {/* Right Panel: Risk Sentinel */}
-      <div className="bg-gray-900/40 border border-white/5 p-8 rounded-[2rem] h-full flex flex-col justify-between">
-        <div>
-          <h4 className="flex items-center gap-2 font-bold mb-8 text-gray-300">
-            <AlertTriangle className="w-5 h-5 text-red-500" />
-            Risk Sentinel
-          </h4>
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <p className="text-xs text-gray-500 uppercase font-bold tracking-widest">Compliance Health</p>
-              <div className="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
-                <div className="h-full bg-blue-500 w-[87%]" />
-              </div>
-              <p className="text-right text-[10px] text-gray-400">87% Auditor-Ready</p>
+      {/* Risk Sentinel: 40% */}
+      <div className="lg:col-span-4 space-y-8">
+        <div className="bg-slate-900 border border-slate-800 p-10 rounded-[2.5rem] h-full flex flex-col justify-between">
+          <div className="space-y-12">
+            <div className="flex items-center justify-between mb-16">
+              <span className="text-slate-500 uppercase font-black tracking-widest text-[10px]">Risk Sentinel</span>
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             </div>
-            
-            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
-              <p className="text-red-500 font-bold text-sm">2 Critical Risks</p>
-              <p className="text-[10px] text-gray-500 mt-1">Vendors with recurring GSTR-1 failures.</p>
+
+            <div className="relative w-48 h-48 mx-auto flex items-center justify-center">
+              <svg className="w-full h-full -rotate-90">
+                <circle cx="50%" cy="50%" r="42%" className="stroke-slate-800 fill-none" strokeWidth="8" />
+                <circle cx="50%" cy="50%" r="42%" className="stroke-emerald-500 fill-none" strokeWidth="8" strokeDasharray="251" strokeDashoffset="25" strokeLinecap="round" />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-5xl font-black text-white">98%</span>
+                <span className="text-[10px] text-slate-600 font-bold tracking-widest uppercase">Audit Score</span>
+              </div>
+            </div>
+
+            <div className="p-8 bg-slate-800/50 rounded-2xl relative overflow-hidden group border border-slate-700">
+              <Zap className="absolute -bottom-8 -right-8 w-32 h-32 text-emerald-500/5" />
+              <p className="text-emerald-500 font-black text-[10px] uppercase tracking-widest mb-4">Swarm Insight</p>
+              <p className="text-sm text-slate-400 leading-relaxed font-medium italic">
+                "Bayesian engine detected a semantic drift in GSTR-2A fields 4 and 7. Adjusting match thresholds to recover additional ₹1,240."
+              </p>
             </div>
           </div>
+
+          <button className="mt-12 w-full py-4 border border-slate-800 text-slate-500 rounded-full font-bold text-xs hover:border-emerald-500/40 hover:text-emerald-400 transition-all uppercase tracking-widest">
+            Download Audit Export
+          </button>
         </div>
       </div>
     </motion.div>

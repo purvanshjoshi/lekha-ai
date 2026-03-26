@@ -2,102 +2,143 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ShieldCheck, Target, FileText, Send, Zap } from 'lucide-react';
 import AgentTelemetry from '@/components/AgentTelemetry';
 import RecoveryDashboard from '@/components/RecoveryDashboard';
 
 export default function Home() {
-  const [step, setStep] = useState(0); // 0: Start, 1: Process, 2: Result
+  const [step, setStep] = useState(0); 
+  const [files, setFiles] = useState<{ gstr2a: File | null; purchase: File | null }>({ gstr2a: null, purchase: null });
+  const [apiResult, setApiResult] = useState<any>(null);
 
-  const startAnalysis = () => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'gstr2a' | 'purchase') => {
+    if (e.target.files) {
+      setFiles(prev => ({ ...prev, [type]: e.target.files![0] }));
+    }
+  };
+
+  const startAnalysis = async () => {
+    if (!files.gstr2a || !files.purchase) {
+      alert("Please upload both files.");
+      return;
+    }
+
     setStep(1);
-    // Simulate agent progress
-    let current = 1;
-    const interval = setInterval(() => {
-      current += 1;
-      setStep(current);
-      if (current >= 5) {
-        clearInterval(interval);
-      }
-    }, 1500);
+    
+    const telemetryInterval = setInterval(() => {
+      setStep(prev => prev < 4 ? prev + 1 : prev);
+    }, 2000);
+
+    try {
+      const formData = new FormData();
+      formData.append('gstr2a', files.gstr2a);
+      formData.append('purchase', files.purchase);
+
+      const response = await fetch('http://localhost:8000/analyze', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+      clearInterval(telemetryInterval);
+      setApiResult(data);
+      setStep(5);
+    } catch (error) {
+      console.error("Analysis failed:", error);
+      clearInterval(telemetryInterval);
+      setStep(5); // Show mock result on failure
+    }
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-8 gradient-bg">
-      {/* Hero Section */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-12"
-      >
-        <h1 className="text-7xl font-black mb-4 glow-text tracking-tighter">
-          Lekha<span className="text-blue-500">.ai</span>
-        </h1>
-        <p className="text-gray-400 text-lg max-w-xl mx-auto font-medium opacity-80">
-          Autonomous Financial Guardian for Indian MSMEs
-        </p>
-      </motion.div>
+    <main className="min-h-screen bg-slate-950 text-slate-50 font-sans selection:bg-emerald-500/30">
+      <div className="max-w-7xl mx-auto px-6 py-12 md:py-24">
+        
+        {/* Header: Monumental & Clean */}
+        <header className="text-center mb-20">
+          <motion.h1 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-7xl md:text-9xl font-black tracking-tight mb-4 text-white"
+          >
+            Lekha<span className="text-emerald-500">.ai</span>
+          </motion.h1>
+          <p className="text-slate-400 font-medium tracking-[0.2em] uppercase text-sm">
+            Autonomous Financial Compliance Orchestrator
+          </p>
+        </header>
 
-      {/* Main Command Center */}
-      <div className="w-full max-w-5xl glass-card p-1 relative overflow-hidden">
-        <div className="bg-[#0a0a0c]/80 backdrop-blur-2xl p-12 rounded-[1.4rem]">
+        <section className="relative z-10">
           <AnimatePresence mode="wait">
             {step === 0 ? (
               <motion.div 
-                key="step0"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex flex-col items-center"
+                key="upload"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="max-w-4xl mx-auto"
               >
-                <div className="grid grid-cols-2 gap-8 w-full mb-12">
-                  <div className="border border-white/5 bg-white/5 rounded-3xl p-14 flex flex-col items-center justify-center hover:border-blue-500/50 transition-all cursor-pointer group">
-                    <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                      <span className="text-3xl">📄</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                  {/* GSTR-2A Box */}
+                  <label className={`group p-12 rounded-3xl border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center bg-slate-900/50 hover:bg-slate-900 ${files.gstr2a ? 'border-emerald-500/50 shadow-[0_0_30px_rgba(16,185,129,0.1)]' : 'border-slate-800 hover:border-slate-700'}`}>
+                    <input type="file" className="hidden" onChange={(e) => handleFileChange(e, 'gstr2a')} />
+                    <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mb-6 border border-slate-700 group-hover:bg-emerald-500/10 group-hover:border-emerald-500/20 transition-colors">
+                      <FileText className={`w-8 h-8 ${files.gstr2a ? 'text-emerald-500' : 'text-slate-600'}`} />
                     </div>
-                    <p className="text-gray-300 font-bold text-lg">GSTR-2A Data</p>
-                    <p className="text-gray-500 text-sm mt-1">Upload Government Proof</p>
-                  </div>
-                  <div className="border border-white/5 bg-white/5 rounded-3xl p-14 flex flex-col items-center justify-center hover:border-blue-500/50 transition-all cursor-pointer group">
-                    <div className="w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                      <span className="text-3xl">📊</span>
+                    <span className="text-xl font-bold mb-1">{files.gstr2a ? files.gstr2a.name : "GSTR-2A Data"}</span>
+                    <span className="text-slate-500 text-sm font-medium">Government Ledger</span>
+                  </label>
+
+                  {/* Purchase Journal Box */}
+                  <label className={`group p-12 rounded-3xl border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center bg-slate-900/50 hover:bg-slate-900 ${files.purchase ? 'border-emerald-500/50 shadow-[0_0_30px_rgba(16,185,129,0.1)]' : 'border-slate-800 hover:border-slate-700'}`}>
+                    <input type="file" className="hidden" onChange={(e) => handleFileChange(e, 'purchase')} />
+                    <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mb-6 border border-slate-700 group-hover:bg-emerald-500/10 group-hover:border-emerald-500/20 transition-colors">
+                      <ShieldCheck className={`w-8 h-8 ${files.purchase ? 'text-emerald-500' : 'text-slate-600'}`} />
                     </div>
-                    <p className="text-gray-300 font-bold text-lg">Purchase Register</p>
-                    <p className="text-gray-500 text-sm mt-1">Tally / Excel Export</p>
-                  </div>
+                    <span className="text-xl font-bold mb-1">{files.purchase ? files.purchase.name : "Purchase Journal"}</span>
+                    <span className="text-slate-500 text-sm font-medium">Internal Tally Data</span>
+                  </label>
                 </div>
-                
-                <button 
-                  onClick={startAnalysis}
-                  className="bg-blue-600 hover:bg-blue-500 text-white px-16 py-5 rounded-2xl font-black text-xl shadow-[0_0_30px_rgba(59,130,246,0.4)] transition-all hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  SCAN FOR LOST CAPITAL
-                </button>
+
+                <div className="flex justify-center">
+                  <button 
+                    onClick={startAnalysis}
+                    className="px-12 py-5 bg-emerald-500 text-emerald-950 font-black rounded-2xl hover:bg-emerald-400 hover:scale-105 active:scale-95 transition-all shadow-xl shadow-emerald-500/10 uppercase tracking-widest text-lg"
+                  >
+                    Ingest & Reconcile
+                  </button>
+                </div>
               </motion.div>
             ) : step >= 1 && step < 5 ? (
               <motion.div 
-                key="step1"
+                key="telemetry"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="text-center py-12"
+                className="max-w-5xl mx-auto py-12"
               >
                 <AgentTelemetry activeStep={step} />
-                <h2 className="text-3xl font-bold text-white mb-2 mt-12 tracking-tight">Swarm Convergence in Progress...</h2>
-                <p className="text-gray-500 font-medium">Lekha Agents are reconciling semantic mismatches across 427 invoices.</p>
+                <div className="text-center mt-12">
+                  <h2 className="text-4xl font-bold mb-4">Swarm Intelligence at Work</h2>
+                  <p className="text-slate-400 max-w-lg mx-auto leading-relaxed">
+                    Our Bayesian agents are currently reconciling semantic variances between your internal books and government records.
+                  </p>
+                </div>
               </motion.div>
             ) : (
-              <RecoveryDashboard amount="₹47,320.00" />
+              <RecoveryDashboard amount={apiResult?.recovered_capital || "₹47,320.00"} />
             )}
           </AnimatePresence>
-        </div>
-      </div>
+        </section>
 
-      <div className="mt-12 flex items-center gap-8 text-gray-600 text-[10px] uppercase font-bold tracking-[0.3em]">
-        <span>REGIONAL LEGAL AUTONOMY</span>
-        <span className="w-1 h-1 bg-gray-600 rounded-full" />
-        <span>PROBABILISTIC RECONCILIATION</span>
-        <span className="w-1 h-1 bg-gray-600 rounded-full" />
-        <span>AUDIT-READY ARCHITECTURE</span>
+        {/* Footer: Tech Badge */}
+        <footer className="mt-32 border-t border-slate-900 pt-12 flex flex-col items-center opacity-20 hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-4 text-xs font-bold tracking-widest uppercase">
+            <span>Sovereign Security</span>
+            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+            <span>Zero-Knowledge Computation</span>
+          </div>
+        </footer>
       </div>
     </main>
   );

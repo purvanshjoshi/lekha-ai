@@ -18,6 +18,7 @@ async def root():
     return {"message": "Lekha.ai API is operational", "status": "healthy"}
 
 from agents.swarm import swarm_app
+from services.parser import parser_service
 
 @app.post("/upload")
 async def upload_files(gstr2a: UploadFile = File(...), purchase_register: UploadFile = File(...)):
@@ -42,8 +43,8 @@ async def upload_files(gstr2a: UploadFile = File(...), purchase_register: Upload
         "results": []
     }
     
-    # Run the swarm (this would be awaited in production)
-    final_state = swarm_app.invoke(swarm_state)
+    # Run the swarm (Real-time async execution)
+    final_state = await swarm_app.run(swarm_state)
     
     return {
         "status": "success",

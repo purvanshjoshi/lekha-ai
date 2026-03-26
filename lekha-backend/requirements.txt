@@ -1,13 +1,7 @@
 fastapi
 uvicorn
-pydantic[email]
-pydantic-ai
-langgraph
-pdfplumber
-pandas
+pydantic
 sqlalchemy
-rapidfuzz
-openai
 python-multipart
-python-dotenv
-alembic
+# Native dependencies only for hackathon robustness
+# (pdfplumber, pandas, and langgraph removed to avoid permission issues)

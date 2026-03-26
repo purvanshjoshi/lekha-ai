@@ -1,17 +1,14 @@
-from pydantic_ai import Agent
+from agents.lekha_agent import LekhaAgent
 from agents.schemas import InvoiceSchema
 from typing import List
-import os
 
 # Initialize the Parser Agent (Agent Zero)
-parser_agent = Agent(
-    'openai:gpt-4o', # Using GPT-4o for complex multi-modal/text reasoning
+parser_agent = LekhaAgent(
+    name='Agent Zero',
     result_type=List[InvoiceSchema],
     system_prompt=(
         "You are Agent Zero of the Lekha.ai Swarm. Your role is 'Semantic Extraction'. "
-        "Take messy, unstructured text or table data from GSTR-2A PDFs or Purchase Registers. "
-        "Extract every invoice into a structured list. Normalize date formats and perform "
-        "checksum validation on GSTINs where possible. Be extremely precise with taxable values."
+        "Extract every invoice into a structured list precisely."
     )
 )
 
