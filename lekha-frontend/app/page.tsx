@@ -1,106 +1,122 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import PageTransition from "@/components/shared/PageTransition";
-import Hero from "@/components/ui/Hero";
-import SentinelUpload from "@/components/features/SentinelUpload";
-import ConsensusSwarm from "@/components/features/ConsensusSwarm";
-import AuditTerminal from "@/components/ui/AuditTerminal";
-import { Mono } from "@/components/ui/Typography";
-import { AudioProvider, useAudio } from "@/components/shared/AudioProvider";
-import SentinelCursor from "@/components/shared/SentinelCursor";
-import StoryNarrative from "@/components/features/StoryNarrative";
-import { ChevronDown } from "lucide-react";
-import { motion } from "framer-motion";
-
-function DashboardContent() {
-  const [activeStep, setActiveStep] = useState(1);
-  const [logs, setLogs] = useState<{ id: string; timestamp: string; type: 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR'; message: string }[]>([
-    { id: "1", timestamp: "14:00", type: "INFO", message: "System initialization sequence complete." },
-    { id: "2", timestamp: "14:05", type: "SUCCESS", message: "Global state coherence verified." },
-  ]);
-  const { play } = useAudio();
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveStep((prev) => (prev % 4) + 1);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
-
-  return (
-    <main className="min-h-screen relative bg-[#000000] text-slate-200">
-      <SentinelCursor />
-      
-      {/* Navigation / Header Branding */}
-      <header className="fixed top-0 left-0 right-0 z-50 p-6 flex justify-between items-center bg-gradient-to-b from-[#000000] via-[#000000]/40 to-transparent pointer-events-none">
-        <div className="flex items-center gap-3 pointer-events-auto cursor-pointer group" onClick={() => play('click')}>
-          <div className="h-4 w-4 bg-white rounded-sm shadow-[0_0_15px_rgba(255,255,255,0.4)] group-hover:scale-110 transition-transform" />
-          <Mono className="text-[11px] text-white">LEKHA // CLOUD</Mono>
-        </div>
-        <div className="pointer-events-auto flex items-center gap-3">
-          <div className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
-          <Mono className="text-[10px] text-slate-400 font-medium">SYSTEM NOMINAL</Mono>
-        </div>
-      </header>
-
-      {/* Hero Section */}
-      <div className="relative h-screen">
-        <Hero />
-        <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 2, duration: 1 }}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        >
-            <Mono className="text-[9px] opacity-40">EXPLORE ARCHITECTURE</Mono>
-            <ChevronDown className="w-4 h-4 text-slate-400 animate-bounce mt-2" />
-        </motion.div>
-      </div>
-
-      {/* The Story / Narrative Overhaul */}
-      <StoryNarrative />
-
-      {/* Ingestion Cluster */}
-      <SentinelUpload />
-
-      {/* Intelligence Swarm */}
-      <ConsensusSwarm activeStep={activeStep} />
-
-      {/* Fixed Persistent Telemetry Bar (Bottom) */}
-      <footer className="fixed bottom-0 left-0 right-0 z-50 p-6 md:p-8 bg-gradient-to-t from-[#000000] via-[#000000]/80 to-transparent pointer-events-none">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-end justify-between gap-8 pointer-events-auto">
-          {/* Real-time Audit Trail */}
-          <div className="w-full md:w-1/3">
-            <AuditTerminal logs={logs} />
-          </div>
-
-          {/* Sovereign Status */}
-          <div className="hidden md:block text-right space-y-3">
-            <Mono className="text-[9px] text-slate-500 block">System Throughput</Mono>
-            <div className="flex items-center gap-3 justify-end">
-              <div className="h-[2px] w-32 bg-white/10 overflow-hidden">
-                <div className="h-full w-[85%] bg-white shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
-              </div>
-              <span className="font-mono text-[10px] text-white">1,240 REQ/S</span>
-            </div>
-          </div>
-        </div>
-      </footer>
-
-      {/* Ambient Flairs (Subtle) */}
-      <div className="fixed top-[10%] right-[-5%] w-[40%] h-[40%] bg-indigo-500/5 blur-[120px] pointer-events-none" />
-      <div className="fixed bottom-[10%] left-[-5%] w-[30%] h-[30%] bg-white/5 blur-[120px] pointer-events-none" />
-    </main>
-  );
-}
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
+  const [isUploading, setIsUploading] = useState(false);
+  const [step, setStep] = useState(0); // 0: Start, 1: Process, 2: Result
+
   return (
-    <AudioProvider>
-      <PageTransition>
-        <DashboardContent />
-      </PageTransition>
-    </AudioProvider>
+    <main className="min-h-screen flex flex-col items-center justify-center p-8 gradient-bg">
+      {/* Hero Section */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-center mb-16"
+      >
+        <h1 className="text-6xl font-bold mb-4 glow-text tracking-tighter">
+          Lekha<span className="text-blue-500">.ai</span>
+        </h1>
+        <p className="text-gray-400 text-xl max-w-2xl mx-auto">
+          The Autonomous Financial Guardian for Indian MSMEs. <br/>
+          Restore your "Economic Dignity" by reclaiming lost capital.
+        </p>
+      </motion.div>
+
+      {/* Main Command Center */}
+      <div className="w-full max-w-4xl glass-card p-12 relative overflow-hidden">
+        <AnimatePresence mode="wait">
+          {step === 0 ? (
+            <motion.div 
+              key="step0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex flex-col items-center"
+            >
+              <div className="grid grid-cols-2 gap-8 w-full mb-12">
+                <div className="border-2 border-dashed border-gray-700 rounded-3xl p-12 flex flex-col items-center justify-center hover:border-blue-500 transition-colors cursor-pointer group">
+                  <span className="text-4xl mb-4 group-hover:scale-110 transition-transform">📄</span>
+                  <p className="text-gray-400 font-medium">GSTR-2A PDF</p>
+                  <p className="text-gray-600 text-sm">Download from GSTN</p>
+                </div>
+                <div className="border-2 border-dashed border-gray-700 rounded-3xl p-12 flex flex-col items-center justify-center hover:border-blue-500 transition-colors cursor-pointer group">
+                  <span className="text-4xl mb-4 group-hover:scale-110 transition-transform">📊</span>
+                  <p className="text-gray-400 font-medium">Purchase Register</p>
+                  <p className="text-gray-600 text-sm">Tally/Excel Export</p>
+                </div>
+              </div>
+              
+              <button 
+                onClick={() => setStep(1)}
+                className="bg-blue-600 hover:bg-blue-500 text-white px-12 py-4 rounded-full font-bold text-lg shadow-lg shadow-blue-900/40 transition-all hover:scale-105"
+              >
+                Scan for Lost Money
+              </button>
+            </motion.div>
+          ) : step === 1 ? (
+            <motion.div 
+              key="step1"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-center py-12"
+            >
+              <div className="flex justify-center gap-12 mb-12">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="flex flex-col items-center">
+                    <div className="w-4 h-4 rounded-full bg-blue-500 agent-pulse mb-4 shadow-[0_0_15px_rgba(59,130,246,0.6)]" />
+                    <span className="text-xs text-gray-500 uppercase tracking-widest">Agent {i}</span>
+                  </div>
+                ))}
+              </div>
+              <h2 className="text-2xl font-light text-gray-300 mb-2">Analyzing Swarm Consensus...</h2>
+              <p className="text-gray-500">Performing Probabilistic Matching on 427 Invoices</p>
+              
+              <button onClick={() => setStep(2)} className="mt-8 text-blue-500 underline">Skip (Demo)</button>
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="step2"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="grid grid-cols-3 gap-8"
+            >
+              <div className="col-span-2 space-y-6">
+                <div className="bg-green-500/10 border border-green-500/30 p-6 rounded-3xl">
+                  <p className="text-green-500 text-sm uppercase font-bold tracking-widest mb-1">Recoverable Capital Found</p>
+                  <h3 className="text-5xl font-bold">₹47,320.00</h3>
+                </div>
+                <div className="bg-gray-800/50 p-6 rounded-3xl">
+                  <h4 className="font-bold mb-4">Urgent Actions Required</h4>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-2xl">
+                      <span>Refiling notice for vendor 'Matrix Tech'</span>
+                      <button className="text-blue-500 font-bold">GENERATE</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-800/50 p-6 rounded-3xl">
+                <h4 className="font-bold mb-4">Risk Sentinel</h4>
+                <div className="flex items-center gap-4 text-red-400">
+                  <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
+                  <span>2 High Risk Vendors</span>
+                </div>
+                <div className="mt-8 space-y-4 text-sm text-gray-400">
+                  <p>Audit Readiness Score: <span className="text-white font-bold">87%</span></p>
+                  <p>Pro-active Injections: <span className="text-white font-bold">₹12k</span></p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <p className="mt-12 text-gray-600 text-sm uppercase tracking-[0.2em]">
+        Secured by Agentic Logic &bull; India First Compliance
+      </p>
+    </main>
   );
 }
