@@ -1,113 +1,88 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@800&family=Space+Grotesk:wght@500;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: 210 20% 2%; /* Ultra-dark Obsidian */
-  --foreground: 210 20% 98%;
+  --background: 0 0% 2%; /* Deep Obsidian */
+  --foreground: 0 0% 98%;
 
-  --primary: 142.1 70.6% 45.3%; /* Emerald */
-  --emerald-glow: rgba(16, 185, 129, 0.4);
-  --gold-accent: 47.9 95.8% 53.1%; /* Gold */
+  --primary: 0 0% 100%; /* Crisp White */
+  --accent: 250 100% 80%; /* Subtle Indigo/Blue accent */
   
-  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-bg: rgba(255, 255, 255, 0.02);
+  --glass-bg-hover: rgba(255, 255, 255, 0.04);
   --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-blur: 20px;
+  --glass-border-hover: rgba(255, 255, 255, 0.15);
+  --glass-blur: 16px;
 }
 
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
-  font-family: 'Inter', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   overflow-x: hidden;
   background-image: 
-    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.03) 0px, transparent 50%);
+    radial-gradient(ellipse at top, rgba(255, 255, 255, 0.03) 0%, transparent 60%),
+    radial-gradient(ellipse at bottom, rgba(255, 255, 255, 0.02) 0%, transparent 40%);
+  background-attachment: fixed;
 }
 
-/* Typography Masterpiece */
-h1, h2, h3 {
-  font-family: 'Manrope', sans-serif;
-  letter-spacing: -0.04em;
-}
-
-.mono-tech {
-  font-family: 'Space Grotesk', monospace;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-}
-
-/* Bespoke glassmorphism Classes */
+/* Premium Glassmorphism */
 .sentinel-glass {
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--glass-border);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .sentinel-glass:hover {
-  border-color: rgba(16, 185, 129, 0.2);
-  background: rgba(15, 23, 42, 0.8);
-  box-shadow: 0 0 40px rgba(16, 185, 129, 0.05);
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-hover);
+  box-shadow: 0 8px 32px -1px rgba(0, 0, 0, 0.3);
 }
 
-/* Cinematic Scanline Animation */
-.scanline {
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.5), transparent);
+/* Subtle Shimmer for Highlights */
+.premium-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.premium-shimmer::after {
+  content: '';
   position: absolute;
-  top: -2px;
+  top: 0;
+  right: 0;
+  bottom: 0;
   left: 0;
-  z-index: 20;
-  pointer-events: none;
-  animation: scan 4s linear infinite;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.05) 20%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 5s infinite;
 }
 
-@keyframes scan {
-  0% { transform: translateY(0); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateY(100%); opacity: 0; }
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
 }
 
-/* High-Fidelity Glows */
-.emerald-glow-strong {
-  box-shadow: 0 0 40px var(--emerald-glow);
-}
-
-.emerald-glow-text {
-  text-shadow: 0 0 20px var(--emerald-glow);
-}
-
-/* Custom Utilities */
+/* Typography Utilities */
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+  .gradient-text {
+    background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.7) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 }
 
-/* Live Badge Pulse */
-.live-pulse {
-  position: relative;
-}
-
-.live-pulse::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: inherit;
-  border-radius: inherit;
-  animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
-  z-index: -1;
-}
-
-@keyframes pulse-ring {
-  0% { transform: scale(1); opacity: 0.4; }
-  100% { transform: scale(2.5); opacity: 0; }
-}

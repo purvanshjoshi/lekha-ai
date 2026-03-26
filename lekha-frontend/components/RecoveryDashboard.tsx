@@ -1,158 +1,105 @@
 "use client";
 
+import React from 'react';
 import { motion } from 'framer-motion';
-import { Target, FileText, Send, Zap, ShieldCheck, TrendingUp, AlertCircle, ChevronRight } from 'lucide-react';
+import { Heading, Text, Mono } from './ui/Typography';
+import SentinelCard from './ui/SentinelCard';
+import { TrendingUp, ShieldCheck, AlertCircle } from 'lucide-react';
 
-export default function RecoveryDashboard({ amount }: { amount: string }) {
+interface RecoveryDashboardProps {
+  amount?: string;
+}
+
+export default function RecoveryDashboard({ amount = "₹47,230.00" }: RecoveryDashboardProps) {
   return (
-    <motion.div 
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full max-w-[1400px] mx-auto pb-32"
-    >
-      {/* Recovery Central Command: 65% */}
-      <div className="lg:col-span-8 space-y-8">
-        {/* Cinematic Hero Metric */}
-        <div className="sentinel-glass p-12 md:p-20 rounded-[3rem] relative overflow-hidden group border-white/5 bg-slate-900/60">
-          <div className="scanline opacity-10" />
-          <Target className="absolute -top-16 -right-16 w-80 h-80 text-emerald-500/[0.03] rotate-12 group-hover:rotate-15 transition-transform duration-1000" />
-          
-          <div className="relative z-10">
-            <div className="flex items-center gap-4 mb-10">
-              <span className="mono-tech text-emerald-500 font-bold tracking-[0.4em] text-[10px] bg-emerald-500/10 px-4 py-1.5 rounded-full border border-emerald-500/20">
-                Recovery Liquidity Index
-              </span>
-              <div className="h-[1px] flex-1 bg-gradient-to-r from-emerald-500/20 to-transparent" />
-            </div>
-
-            <div className="flex flex-col md:flex-row md:items-baseline gap-6 mb-12">
-              <h3 className="text-7xl md:text-[10rem] font-black leading-none tracking-tighter emerald-glow-text text-white">
-                {amount.replace('₹', '')}
-              </h3>
-              <div className="flex flex-col">
-                <span className="text-3xl font-black text-slate-700 tracking-[0.2em] mb-1">INR</span>
-                <span className="text-[10px] mono-tech text-emerald-500/60 font-medium">Unlocked Growth Capital</span>
+    <div className="w-full space-y-12">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Primary Metric: Recovered Capital */}
+        <SentinelCard className="lg:col-span-2 border-emerald-500/40 bg-emerald-500/5">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <TrendingUp className="w-5 h-5 text-emerald-500" />
+                <Mono className="text-emerald-500/80">Sovereign Recovery Index</Mono>
               </div>
+              <Heading as="h2" className="text-6xl md:text-8xl font-black tracking-tighter text-white">
+                {amount}
+              </Heading>
+              <Text size="lg" className="text-emerald-500/60 font-medium italic">
+                Verified capital ready for immediate consensus execution.
+              </Text>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-10 border-t border-white/5">
-               <div className="space-y-1">
-                 <p className="mono-tech text-[9px] text-slate-500 font-bold">Consensus nodes</p>
-                 <p className="text-xl font-bold text-white">128/128 Active</p>
-               </div>
-               <div className="space-y-1">
-                 <p className="mono-tech text-[9px] text-slate-500 font-bold">Semantic precision</p>
-                 <p className="text-xl font-bold text-emerald-500">99.8% Perfect</p>
-               </div>
-               <div className="space-y-1">
-                 <p className="mono-tech text-[9px] text-slate-500 font-bold">Bailment priority</p>
-                 <p className="text-xl font-bold text-white">Ultra High</p>
-               </div>
+            <div className="h-32 w-32 md:h-48 md:w-48 bg-emerald-500/10 rounded-full border border-emerald-500/20 flex items-center justify-center relative overflow-hidden group">
+               <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 to-transparent animate-pulse" />
+               <ShieldCheck className="w-16 h-16 text-emerald-500 relative z-10" />
             </div>
           </div>
-        </div>
+        </SentinelCard>
 
-        {/* Action Ledger */}
-        <div className="space-y-6">
-          <div className="flex items-center justify-between px-6">
-            <h4 className="flex items-center gap-4 text-2xl font-black text-white uppercase tracking-tighter">
-              <Binary className="w-6 h-6 text-emerald-500" />
-              Sovereign Execution Ledger
-            </h4>
-            <span className="text-[10px] mono-tech text-slate-500 font-bold">Updated real-time</span>
-          </div>
-          
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <motion.div 
-                key={i} 
-                whileHover={{ x: 10 }}
-                className="flex flex-col md:flex-row md:items-center justify-between p-10 sentinel-glass border-white/5 bg-slate-900/40 rounded-[2rem] hover:bg-slate-900 transition-colors group"
-              >
-                <div className="flex items-center gap-8">
-                  <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 text-slate-400 font-black text-xl group-hover:text-emerald-500 group-hover:border-emerald-500/20 transition-all">
-                    0{i}
-                  </div>
-                  <div>
-                    <h5 className="text-2xl font-black text-white mb-2 leading-none">Trade Matrix Global Ltd.</h5>
-                    <div className="flex items-center gap-4">
-                      <p className="mono-tech text-[9px] text-slate-500 font-bold">ID: RECO-99{i}X</p>
-                      <div className="w-1 h-1 rounded-full bg-slate-800" />
-                      <p className="mono-tech text-[9px] text-emerald-500 font-black">₹5,420 Potential</p>
-                    </div>
-                  </div>
+        {/* Secondary Metrics cluster */}
+        <div className="space-y-8">
+          <SentinelCard className="p-6 border-violet-500/20 bg-violet-500/5">
+             <div className="space-y-2">
+                <Mono className="text-violet-400">Match Confidence</Mono>
+                <Heading as="h4" className="text-4xl font-black">99.8%</Heading>
+                <div className="h-1 w-full bg-violet-500/10 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: "99.8%" }}
+                    transition={{ duration: 2 }}
+                    className="h-full bg-violet-500" 
+                  />
                 </div>
-                
-                <div className="mt-8 md:mt-0 flex items-center gap-6">
-                  <div className="hidden md:flex flex-col text-right">
-                    <span className="text-[9px] mono-tech text-slate-500 font-bold">Match Confidence</span>
-                    <span className="text-sm font-black text-white">99.2%</span>
-                  </div>
-                  <button className="flex items-center gap-4 px-10 py-5 bg-emerald-500 text-emerald-950 rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-emerald-400 transition-all shadow-2xl shadow-emerald-500/20">
-                    <Send className="w-4 h-4" /> Execute Recovery
-                  </button>
+             </div>
+          </SentinelCard>
+
+          <SentinelCard className="p-6 border-amber-500/20 bg-amber-500/5">
+             <div className="space-y-2">
+                <Mono className="text-amber-400">Execution Risks</Mono>
+                <div className="flex items-center gap-3">
+                   <Heading as="h4" className="text-4xl font-black">02</Heading>
+                   <AlertCircle className="w-6 h-6 text-amber-500 animate-pulse" />
                 </div>
-              </motion.div>
-            ))}
-          </div>
+                <Text size="xs" className="text-amber-500/60">Semantic anomalies detected in 0x2A stream.</Text>
+             </div>
+          </SentinelCard>
         </div>
       </div>
 
-      {/* Sentinel Sidebar: 35% */}
-      <div className="lg:col-span-4 space-y-8">
-        <div className="sentinel-glass p-10 md:p-12 rounded-[3.5rem] h-full flex flex-col justify-between bg-slate-950 border-white/5 shadow-inner">
-          <div className="space-y-16">
-            <div className="flex items-center justify-between">
-              <span className="mono-tech text-slate-400 font-bold tracking-[0.5em] text-[9px]">Sentinel Health</span>
-              <ShieldCheck className="w-5 h-5 text-emerald-500/40" />
-            </div>
-
-            {/* Audit Score Visualizer */}
-            <div className="relative w-64 h-64 mx-auto flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full border-[12px] border-white/[0.02]" />
-              <motion.div 
-                initial={{ rotate: 0 }}
-                animate={{ rotate: 360 }}
-                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 rounded-full border-[2px] border-dashed border-emerald-500/20 m-2" 
-              />
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <motion.span 
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: 1 }}
-                  className="text-7xl font-black text-white tracking-tighter"
-                >
-                  98<span className="text-emerald-500 text-3xl">%</span>
-                </motion.span>
-                <span className="mono-tech text-[9px] text-slate-500 font-bold tracking-widest mt-2 uppercase">Integrity Score</span>
-              </div>
-            </div>
-
-            {/* Live Insights Terminal */}
-            <div className="space-y-6">
-              <div className="p-8 rounded-[2rem] bg-white/[0.03] border border-white/5 relative overflow-hidden group">
-                <TrendingUp className="absolute -bottom-6 -right-6 w-24 h-24 text-emerald-500/[0.03]" />
-                <p className="mono-tech text-emerald-500 font-black text-[9px] mb-4 tracking-[0.3em]">Operational Insight</p>
-                <p className="text-sm text-slate-400 leading-relaxed font-medium italic">
-                  "The Bayesian engine recalibrated match thresholds for Node-04. Found ₹1,240 additional ITC by ignoring whitespace variances in GSTIN '27AA...'"
-                </p>
-              </div>
-
-              <div className="p-8 rounded-[2rem] bg-amber-500/5 border border-amber-500/10 relative overflow-hidden">
-                <AlertCircle className="absolute -bottom-6 -right-6 w-24 h-24 text-amber-500/5" />
-                <p className="mono-tech text-amber-500 font-black text-[9px] mb-4 tracking-[0.3em]">Compliance Alert</p>
-                <p className="text-sm text-amber-500/60 leading-relaxed font-medium">
-                  3 vendors detected with suspended GSTINs. Deferred recovery notices until verification.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <button className="mt-16 w-full py-6 border border-white/10 text-slate-500 rounded-full font-black text-[10px] hover:border-emerald-500/40 hover:text-emerald-400 transition-all uppercase tracking-[0.3em] flex items-center justify-center gap-4">
-            Download Audit Consensus <ChevronRight className="w-4 h-4" />
+      {/* Action Ledger */}
+      <div className="sentinel-glass p-8 rounded-[2rem] border-white/5">
+        <div className="flex items-center justify-between mb-8">
+          <Heading as="h3" weight="semibold" className="text-2xl">Compliance Execution Ledger</Heading>
+          <button className="bg-emerald-500 text-black px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-transform">
+             Initiate Disbursement
           </button>
         </div>
+        
+        <div className="space-y-4">
+          {[
+            { vendor: "Global Tech Solutions", id: "0x451", amount: "₹12,400", status: "VERIFIED" },
+            { vendor: "Alpha Logistics", id: "0x882", amount: "₹8,230", status: "VERIFIED" },
+            { vendor: "Sentinel Prime", id: "0x991", amount: "₹26,600", status: "AWAITING" },
+          ].map((item, i) => (
+            <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-white/5 hover:bg-white/5 transition-colors">
+              <div className="flex items-center gap-4">
+                 <div className="h-10 w-10 rounded-lg bg-slate-800 flex items-center justify-center">
+                    <Mono className="text-[9px] text-slate-500">{item.id}</Mono>
+                 </div>
+                 <div>
+                    <Heading as="h5" weight="medium" className="text-sm">{item.vendor}</Heading>
+                    <Mono className="text-[8px] opacity-40">Vendor Code: VC_{item.id}</Mono>
+                 </div>
+              </div>
+              <div className="text-right">
+                 <Heading as="h5" weight="bold" className="text-emerald-500">{item.amount}</Heading>
+                 <Mono className={`text-[8px] ${item.status === 'VERIFIED' ? 'text-emerald-500' : 'text-amber-500'}`}>{item.status}</Mono>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
