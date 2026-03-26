@@ -1,24 +1,69 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AgentTelemetry from '@/components/AgentTelemetry';
 import RecoveryDashboard from '@/components/RecoveryDashboard';
 
-export default function Home() {
-  const [step, setStep] = useState(0); // 0: Start, 1: Process, 2: Result
+interface SwarmResult {
+  recovered_capital: string;
+  results: any[];
+  actions: any[];
+  audit_trail_id: string;
+}
 
-  const startAnalysis = () => {
+export default function Home() {
+  const [step, setStep] = useState(0); // 0: Start, 1: Process, 5: Result
+  const [gstr2aFile, setGstr2aFile] = useState<File | null>(null);
+  const [purchaseFile, setPurchaseFile] = useState<File | null>(null);
+  const [swarmData, setSwarmData] = useState<SwarmResult | null>(null);
+
+  const gstr2aRef = useRef<HTMLInputElement>(null);
+  const purchaseRef = useRef<HTMLInputElement>(null);
+
+  const startAnalysis = async () => {
+    if (!gstr2aFile || !purchaseFile) {
+      alert("Please upload both GSTR-2A and Purchase Register files to initialize Swarm.");
+      return;
+    }
+
     setStep(1);
-    // Simulate agent progress
+
+    // Fake progress simulation while fetch happens in background
     let current = 1;
     const interval = setInterval(() => {
-      current += 1;
+      current = current < 4 ? current + 1 : 4;
       setStep(current);
-      if (current >= 5) {
-        clearInterval(interval);
-      }
-    }, 1500);
+    }, 2000);
+
+    const formData = new FormData();
+    formData.append('gstr2a', gstr2aFile);
+    formData.append('purchase_register', purchaseFile);
+
+    try {
+      const response = await fetch('http://localhost:8000/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error("Swarm Intelligence API Error");
+
+      const data = await response.json();
+      setSwarmData(data);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to connect to Swarm Node (Backend Error). Using fallback demo mode.");
+      // Fallback for demo if backend is offline
+      setSwarmData({
+        recovered_capital: "₹47,320.00",
+        results: [],
+        actions: [{ company: "Matrix Solutions Pct Ltd", invoice: "INV-4239", delta: "₹5,340" }],
+        audit_trail_id: "DEMO-XYZ"
+      });
+    } finally {
+      clearInterval(interval);
+      setStep(5);
+    }
   };
 
   return (
@@ -50,27 +95,36 @@ export default function Home() {
                 className="flex flex-col items-center"
               >
                 <div className="grid grid-cols-2 gap-8 w-full mb-12">
-                  <div className="border border-white/5 bg-white/5 rounded-3xl p-14 flex flex-col items-center justify-center hover:border-blue-500/50 transition-all cursor-pointer group">
+                  <div 
+                    onClick={() => gstr2aRef.current?.click()}
+                    className={`border ${gstr2aFile ? 'border-blue-500 bg-blue-500/10' : 'border-white/5 bg-white/5'} rounded-3xl p-14 flex flex-col items-center justify-center hover:border-blue-500/50 transition-all cursor-pointer group relative overflow-hidden`}
+                  >
+                    <input type="file" className="hidden" ref={gstr2aRef} onChange={(e) => setGstr2aFile(e.target.files?.[0] || null)} />
                     <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                      <span className="text-3xl">📄</span>
+                      {gstr2aFile ? <span className="text-3xl">✅</span> : <span className="text-3xl">📄</span>}
                     </div>
-                    <p className="text-gray-300 font-bold text-lg">GSTR-2A Data</p>
-                    <p className="text-gray-500 text-sm mt-1">Upload Government Proof</p>
+                    <p className="text-gray-300 font-bold text-lg">{gstr2aFile ? gstr2aFile.name : 'GSTR-2A Data'}</p>
+                    <p className="text-gray-500 text-sm mt-1">{gstr2aFile ? 'Ready for Analysis' : 'Upload Government Proof'}</p>
                   </div>
-                  <div className="border border-white/5 bg-white/5 rounded-3xl p-14 flex flex-col items-center justify-center hover:border-blue-500/50 transition-all cursor-pointer group">
+                  
+                  <div 
+                    onClick={() => purchaseRef.current?.click()}
+                    className={`border ${purchaseFile ? 'border-purple-500 bg-purple-500/10' : 'border-white/5 bg-white/5'} rounded-3xl p-14 flex flex-col items-center justify-center hover:border-blue-500/50 transition-all cursor-pointer group relative overflow-hidden`}
+                  >
+                    <input type="file" className="hidden" ref={purchaseRef} onChange={(e) => setPurchaseFile(e.target.files?.[0] || null)} />
                     <div className="w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                      <span className="text-3xl">📊</span>
+                      {purchaseFile ? <span className="text-3xl">✅</span> : <span className="text-3xl">📊</span>}
                     </div>
-                    <p className="text-gray-300 font-bold text-lg">Purchase Register</p>
-                    <p className="text-gray-500 text-sm mt-1">Tally / Excel Export</p>
+                    <p className="text-gray-300 font-bold text-lg">{purchaseFile ? purchaseFile.name : 'Purchase Register'}</p>
+                    <p className="text-gray-500 text-sm mt-1">{purchaseFile ? 'Ready for Analysis' : 'Tally / Excel Export'}</p>
                   </div>
                 </div>
                 
                 <button 
                   onClick={startAnalysis}
-                  className="bg-blue-600 hover:bg-blue-500 text-white px-16 py-5 rounded-2xl font-black text-xl shadow-[0_0_30px_rgba(59,130,246,0.4)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className={`${gstr2aFile && purchaseFile ? 'bg-blue-600 hover:bg-blue-500 hover:scale-[1.02]' : 'bg-gray-800 text-gray-400 cursor-not-allowed'} px-16 py-5 rounded-2xl font-black text-xl shadow-[0_0_30px_rgba(59,130,246,0.4)] transition-all active:scale-[0.98]`}
                 >
-                  SCAN FOR LOST CAPITAL
+                  INTEGRATE SWARM INTELLIGENCE
                 </button>
               </motion.div>
             ) : step >= 1 && step < 5 ? (
@@ -83,10 +137,13 @@ export default function Home() {
               >
                 <AgentTelemetry activeStep={step} />
                 <h2 className="text-3xl font-bold text-white mb-2 mt-12 tracking-tight">Swarm Convergence in Progress...</h2>
-                <p className="text-gray-500 font-medium">Lekha Agents are reconciling semantic mismatches across 427 invoices.</p>
+                <p className="text-gray-500 font-medium">Lekha Agents are reconciling semantic mismatches across live uploaded documents.</p>
               </motion.div>
             ) : (
-              <RecoveryDashboard amount="₹47,320.00" />
+              <RecoveryDashboard 
+                amount={swarmData?.recovered_capital || "₹0.00"} 
+                actions={swarmData?.actions || []}
+              />
             )}
           </AnimatePresence>
         </div>

@@ -1,9 +1,18 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { CheckCircle, AlertTriangle, FileText, Send } from 'lucide-react';
+import { CheckCircle, AlertTriangle, FileText, Send, Download } from 'lucide-react';
 
-export default function RecoveryDashboard({ amount }: { amount: string }) {
+interface ActionItem {
+  company: string;
+  invoice: string;
+  delta: string;
+}
+
+export default function RecoveryDashboard({ amount, actions }: { amount: string, actions: ActionItem[] }) {
+  const handleExport = () => {
+    window.location.href = 'http://localhost:8000/export';
+  };
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -29,17 +38,19 @@ export default function RecoveryDashboard({ amount }: { amount: string }) {
             Priority Legal Drafts
           </h4>
           <div className="space-y-4">
-            {[1, 2].map((i) => (
+            {actions && actions.length > 0 ? actions.map((act, i) => (
               <div key={i} className="flex items-center justify-between p-5 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors group">
                 <div>
-                  <p className="font-bold text-gray-200">Matrix Solutions Pct Ltd</p>
-                  <p className="text-xs text-gray-500">Invoice: INV-4239 | Delta: ₹5,340</p>
+                  <p className="font-bold text-gray-200">{act.company}</p>
+                  <p className="text-xs text-gray-500">Invoice: {act.invoice} | Delta: {act.delta}</p>
                 </div>
                 <button className="bg-blue-600 text-white px-6 py-2 rounded-xl text-sm font-bold opacity-80 group-hover:opacity-100 flex items-center gap-2">
                   <Send className="w-4 h-4" /> Send Notice
                 </button>
               </div>
-            ))}
+            )) : (
+              <p className="text-gray-500 text-sm italic">No actionable discrepancies found by Swarm.</p>
+            )}
           </div>
         </div>
       </div>
@@ -61,9 +72,17 @@ export default function RecoveryDashboard({ amount }: { amount: string }) {
             </div>
             
             <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
-              <p className="text-red-500 font-bold text-sm">2 Critical Risks</p>
-              <p className="text-[10px] text-gray-500 mt-1">Vendors with recurring GSTR-1 failures.</p>
+              <p className="text-red-500 font-bold text-sm">{actions ? actions.length : 0} Critical Risks</p>
+              <p className="text-[10px] text-gray-500 mt-1">Vendors flagged for semantic discrepancies.</p>
             </div>
+            
+            <button 
+              onClick={handleExport}
+              className="w-full mt-4 bg-gray-800 hover:bg-gray-700 text-white p-4 rounded-xl flex items-center justify-center gap-2 font-bold transition-all text-sm border border-gray-700"
+            >
+              <Download className="w-4 h-4" />
+              Export Audit Evidence (.zip)
+            </button>
           </div>
         </div>
       </div>

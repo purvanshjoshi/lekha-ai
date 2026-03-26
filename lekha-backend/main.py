@@ -7,7 +7,7 @@ app = FastAPI(title="Lekha.ai API", version="1.0.0")
 # Enable CORS for Next.js frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:3001", "http://127.0.0.1:3001"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -17,6 +17,7 @@ app.add_middleware(
 async def root():
     return {"message": "Lekha.ai API is operational", "status": "healthy"}
 
+from agents.schemas import InvoiceSchema
 from agents.swarm import swarm_app
 from services.parser import parser_service
 
@@ -27,11 +28,15 @@ async def upload_files(gstr2a: UploadFile = File(...), purchase_register: Upload
     purchase_content = await purchase_register.read()
     
     # Process files (Agent Zero)
-    gstr2a_invoices = parser_service.parse_gstr2a_pdf(gstr2a_content)
-    purchase_invoices = parser_service.parse_purchase_register(
+    gstr2a_dicts = parser_service.parse_gstr2a_pdf(gstr2a_content)
+    purchase_dicts = parser_service.parse_purchase_register(
         purchase_content, 
         purchase_register.filename.split('.')[-1]
     )
+    
+    # Convert to Pydantic objects for Swarm processing
+    gstr2a_invoices = [InvoiceSchema(**inv) for inv in gstr2a_dicts]
+    purchase_invoices = [InvoiceSchema(**inv) for inv in purchase_dicts]
     
     # Part 2: Trigger the Swarm Intelligence
     # In a real app, this would be an async task or background job
