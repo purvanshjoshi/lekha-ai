@@ -1,44 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@800&family=Space+Grotesk:wght@500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
+  --background: 210 20% 2%; /* Ultra-dark Obsidian */
+  --foreground: 210 20% 98%;
 
-  --card: 222.2 84% 4.9%;
-  --card-foreground: 210 40% 98%;
-
-  --popover: 222.2 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
-
-  --primary: 142.1 70.6% 45.3%;
-  --primary-foreground: 144.9 80.4% 10%;
-
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98%;
-
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-
-  --accent: 217.2 32.6% 17.5%;
-  --accent-foreground: 210 40% 98%;
-
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
-
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 142.1 70.6% 45.3%;
+  --primary: 142.1 70.6% 45.3%; /* Emerald */
+  --emerald-glow: rgba(16, 185, 129, 0.4);
+  --gold-accent: 47.9 95.8% 53.1%; /* Gold */
+  
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: 20px;
 }
 
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.03) 0px, transparent 50%);
 }
 
+/* Typography Masterpiece */
+h1, h2, h3 {
+  font-family: 'Manrope', sans-serif;
+  letter-spacing: -0.04em;
+}
+
+.mono-tech {
+  font-family: 'Space Grotesk', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+/* Bespoke glassmorphism Classes */
+.sentinel-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sentinel-glass:hover {
+  border-color: rgba(16, 185, 129, 0.2);
+  background: rgba(15, 23, 42, 0.8);
+  box-shadow: 0 0 40px rgba(16, 185, 129, 0.05);
+}
+
+/* Cinematic Scanline Animation */
+.scanline {
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.5), transparent);
+  position: absolute;
+  top: -2px;
+  left: 0;
+  z-index: 20;
+  pointer-events: none;
+  animation: scan 4s linear infinite;
+}
+
+@keyframes scan {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+/* High-Fidelity Glows */
+.emerald-glow-strong {
+  box-shadow: 0 0 40px var(--emerald-glow);
+}
+
+.emerald-glow-text {
+  text-shadow: 0 0 20px var(--emerald-glow);
+}
+
+/* Custom Utilities */
 @layer utilities {
-  .neon-glow {
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+  .text-balance {
+    text-wrap: balance;
   }
+}
+
+/* Live Badge Pulse */
+.live-pulse {
+  position: relative;
+}
+
+.live-pulse::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  border-radius: inherit;
+  animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+  z-index: -1;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.4; }
+  100% { transform: scale(2.5); opacity: 0; }
 }
