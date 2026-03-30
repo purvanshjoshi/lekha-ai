@@ -15,7 +15,7 @@
 
 ---
 
-## 🚀 The Vision
+## 🚀 The Vision:
 
 Every year, Indian MSMEs lose an estimated **₹1.5 Lakh Crore** in blocked Input Tax Credit. The culprit? Tiny human errors—transposed characters, misread invoices, and delayed GSTR-1 vendor filings. 
 
